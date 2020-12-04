@@ -1,6 +1,9 @@
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext';
+import StudentStoreValidator from '../../Validators/Student/StudentStoreValidator';
 import Student from 'App/Models/Student';
-import { DateTime } from 'luxon';
+import ImportStudents from '../../Utils/ImportStudents';
+import Application from '@ioc:Adonis/Core/Application';
+import fs from 'fs';
 
 export default class StudentsController {
   public async index({ request }: HttpContextContract) {
@@ -10,19 +13,20 @@ export default class StudentsController {
 
     const query = Student.query();
 
-    if(term) {
-      query.where('name', '~*', `.*${term}.*`);
+    if (term) {
+      query.where('name', 'ilike', `%${term}%`);
+      //query.where('name', '~*', `.*${term}.*`);
       // .orWhere('cpf', '~*', `.*${term}.*`)
       // .orWhere('registration', '~*', `.*${term}.*`)
       // .orWhere('email', '~*', `.*${term}.*`);
     }
-
+    query.orderBy('name');
     return await query.paginate(page, perPage);
   }
 
   public async store({ request }: HttpContextContract) {
-    const birthDate = DateTime.fromISO(request.post().birth_date);
-    const student = await Student.create({ ...request.post(), birthDate });
+    const data = await request.validate(StudentStoreValidator);
+    const student = await Student.create(data);
     return student;
   }
 
@@ -35,15 +39,34 @@ export default class StudentsController {
   }
 
   public async update({ params, request }: HttpContextContract) {
+    const data = await request.validate(StudentStoreValidator);
     const { id } = params;
     const student = await Student.findOrFail(id);
-    student.merge(request.post());
+    student.merge(data);
     await student.save();
+    return student;
   }
 
   public async destroy({ params }: HttpContextContract) {
     const { id } = params;
     const student = await Student.findOrFail(id);
     await student.delete();
+  }
+
+  public async import({ request, response }: HttpContextContract) {
+    console.log('Consegui');
+    const file = request.file('file');
+    try {
+      await file?.move(Application.tmpPath('upload'));
+      if (file?.filePath) {
+        await ImportStudents(file.filePath);
+      }
+    } catch (error) {
+      response.status(400).json({ message: error.message });
+    } finally {
+      if (file?.filePath) {
+        fs.unlinkSync(file.filePath);
+      }
+    }
   }
 }

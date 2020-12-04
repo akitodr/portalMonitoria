@@ -8,19 +8,21 @@ export default class CreateStudentsTables extends BaseSchema {
       table.increments('id');
 
       table.string('name').notNullable();
-      table.string('cpf', 11).unique().notNullable();
+      table.string('cpf').notNullable();
       table.date('birth_date').notNullable();
-      table.string('registration',12).unique().notNullable();
       table.string('phone').notNullable();
-      table.string('email').notNullable();
-      table.string('institutional_email').notNullable();
+      table.string('email').nullable();
+      table.string('institutional_email').nullable();
+      table.string('status').notNullable();
+      table.boolean('is_valid').notNullable().defaultTo(true);
+      table.boolean('exists').notNullable().defaultTo(false);
 
-      table.integer('school_id').notNullable();
+      table.integer('school_id');
       table.foreign('school_id')
         .references('id')
         .inTable('schools');
 
-      table.integer('course_id').notNullable();
+      table.integer('course_id');
       table.foreign('course_id')
         .references('id')
         .inTable('courses');

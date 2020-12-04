@@ -1,5 +1,6 @@
 import { DateTime } from 'luxon';
-import { BaseModel, column, belongsTo, BelongsTo } from '@ioc:Adonis/Lucid/Orm';
+import { BaseModel, column, belongsTo, BelongsTo, beforeSave } from '@ioc:Adonis/Lucid/Orm';
+import { cpf } from 'cpf-cnpj-validator';
 import Course from './Course';
 import School from './School';
 
@@ -17,9 +18,6 @@ export default class Student extends BaseModel {
   public birthDate: DateTime;
 
   @column()
-  public registration: string;
-
-  @column()
   public phone: string;
 
   @column()
@@ -27,6 +25,12 @@ export default class Student extends BaseModel {
 
   @column()
   public institutionalEmail: string;
+
+  @column()
+  public status: string;
+
+  @column()
+  public isValid: boolean;
 
   @column()
   public schoolId: number;
@@ -45,4 +49,9 @@ export default class Student extends BaseModel {
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   public updatedAt: DateTime;
+
+  @beforeSave()
+  public static async validate(student: Student) {
+    student.isValid = cpf.isValid(student.$dirty.cpf);
+  }
 }
