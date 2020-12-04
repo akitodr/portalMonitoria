@@ -30,3 +30,7 @@ Route.post('/schools/:id/delete-course', 'SchoolsController.deleteCourse');
 
 Route.resource('/courses', 'CoursesController').apiOnly();
 Route.resource('/students', 'StudentsController').apiOnly();
+Route.post('/students/import', 'StudentsController.import');
+
+Route.resource('/teachers', 'TeachersController').apiOnly();
+Route.post('/teachers/import', 'TeachersController.import');
