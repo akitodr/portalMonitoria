@@ -1,1 +1,1 @@
-Arquitetura e Design.1,Ciências da Vida.1,Comunicação e Artes.1,Direito.1,Educação e Humanidades.1,Medicina.1,Negócios.1,Politécnica.1,Londrina.2,Maringá.3,Toledo.4
+Belas Artes.1,Ciências da Vida.1,Direito.1,Educação e Humanidades.1,Medicina.1,Negócios.1,Politécnica.1,Londrina.2,Maringá.3,Toledo.4
