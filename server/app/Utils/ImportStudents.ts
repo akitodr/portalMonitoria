@@ -3,6 +3,23 @@ import Student from 'App/Models/Student';
 import Course from 'App/Models/Course';
 import School from 'App/Models/School';
 import xlsx from 'xlsx';
+import Project from 'App/Models/Project';
+import ProjectStudent from 'App/Models/ProjectStudent';
+
+function payAmount(value: number) {
+  switch (value) {
+    case 2:
+      return '114,00';
+    case 4:
+      return '226,00';
+    case 6:
+      return '342,00';
+    case 8:
+      return '456,00';
+    default:
+      return '0,00';
+  }
+}
 
 export default async function importStudent(filePath: string) {
   const workbook = xlsx.readFile(filePath, { cellDates: true });
@@ -27,17 +44,15 @@ export default async function importStudent(filePath: string) {
       school,
       course,
       status,
-      type,
-      cr,
-      cv,
-      number_class,
-      number_extraclass,
-      service_type,
+      modality,
+      chr,
+      chv,
+      class_number,
+      extraclass_number,
+      type_of_service,
       discipline,
       teacher,
     ] = data[index];
-
-    console.log('Old course:' + course);
 
     project = project.trim();
     name = name
@@ -45,9 +60,7 @@ export default async function importStudent(filePath: string) {
       .toLowerCase()
       .replace(/\w\S*/g, (w) => w.replace(/^\w/, (c) => c.toUpperCase()));
     cpf = cpf.toString().trim().replace(/\./g, '').replace('-', '');
-    console.log('CPF: ' + cpf);
     phone = phone.toString().trim();
-    console.log('Telefone: ' + phone);
     email = email.trim().toLowerCase();
     institutionalEmail = institutionalEmail.trim().toLowerCase();
     school = school
@@ -57,22 +70,18 @@ export default async function importStudent(filePath: string) {
     course = course
       .trim()
       .toLowerCase()
-      //replacing non-break space (160) to normal space (32)
       .replace(/\u00A0/g, ' ')
       .replace(/\w\S*/g, (w) => w.replace(/^\w/, (c) => c.toUpperCase()));
     status = status
       .trim()
       .replace(/\w\S*/g, (w) => w.replace(/^\w/, (c) => c.toUpperCase()));
-    type = type.trim();
-    service_type = service_type.trim();
+    modality = modality.trim();
+    type_of_service = type_of_service.trim();
     discipline = discipline.trim();
     teacher = teacher
       .trim()
       .toLowerCase()
       .replace(/\w\S*/g, (w) => w.replace(/^\w/, (c) => c.toUpperCase()));
-
-    console.log('New course:' + course);
-    //console.log(project, name, cpf, phone, email, institutionalEmail, school, course, status, type, service_type, discipline, teacher);
 
     const courseTest = await Course.query()
       .where('name', 'ilike', course)
@@ -83,16 +92,35 @@ export default async function importStudent(filePath: string) {
       .first();
     const schoolId = schoolTest!.id;
 
-    await Student.create({
-      name,
-      cpf,
-      birthDate: DateTime.fromJSDate(birth_date),
-      phone,
-      email,
-      institutionalEmail,
-      status,
-      schoolId,
-      courseId,
-    });
+    let student = await Student.findBy('cpf', cpf);
+    if(!student) {
+      student = await Student.create({
+        name,
+        cpf,
+        birthDate: DateTime.fromJSDate(birth_date),
+        phone,
+        email,
+        institutionalEmail,
+        status,
+        schoolId,
+        courseId,
+      });
+    }
+
+    const existingProject = await Project.findBy('code', project);
+    if(existingProject) {
+      await ProjectStudent.create({
+        projectId: existingProject.id,
+        studentId: student.id,
+        payAmount: payAmount(chr),
+        startDate: DateTime.fromJSDate(start_date),
+        modality,
+        chr,
+        chv,
+        classNumber: class_number,
+        extraclassNumber: extraclass_number,
+        typeOfService: type_of_service,
+      });
+    }
   }
 }

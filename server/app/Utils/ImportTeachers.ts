@@ -15,8 +15,6 @@ export default async function importStudent(filePath: string) {
 
   for (let index = 2; index < data.length; index++) {
     let [name, code, email, phone_code, phone, course, school] = data[index];
-
-    console.log(data[index]);
     name = name
       .toString()
       .trim()
