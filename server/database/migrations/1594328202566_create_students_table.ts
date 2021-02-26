@@ -15,7 +15,7 @@ export default class CreateStudentsTables extends BaseSchema {
       table.string('institutional_email').nullable();
       table.string('status').notNullable();
       table.boolean('is_valid').notNullable().defaultTo(true);
-      table.boolean('exists').notNullable().defaultTo(false);
+      table.boolean('tried_to_update').notNullable().defaultTo(false);
 
       table.integer('school_id');
       table.foreign('school_id')

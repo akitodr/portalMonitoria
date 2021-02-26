@@ -9,12 +9,14 @@ export default class CreateProjectTeacherTables extends BaseSchema {
       table.integer('project_id').notNullable();
       table.foreign('project_id')
         .references('id')
-        .inTable('projects');
+        .inTable('projects')
+        .onDelete('cascade');
 
       table.integer('teacher_id').notNullable();
       table.foreign('teacher_id')
         .references('id')
-        .inTable('teachers');
+        .inTable('teachers')
+        .onDelete('cascade');
 
       table.timestamps(true);
     });

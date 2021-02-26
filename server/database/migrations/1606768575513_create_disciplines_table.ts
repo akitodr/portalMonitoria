@@ -8,8 +8,12 @@ export default class CreateDisciplinesTables extends BaseSchema {
       table.increments('id');
 
       table.string('name').notNullable();
-      table.string('code').notNullable();
+      table.string('code');
       table.string('hours');
+      table.integer('project_id');
+      table.foreign('project_id')
+        .references('id')
+        .inTable('projects');
 
       table.timestamps(true);
     });
