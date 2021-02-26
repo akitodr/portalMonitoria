@@ -34,3 +34,12 @@ Route.post('/students/import', 'StudentsController.import');
 
 Route.resource('/teachers', 'TeachersController').apiOnly();
 Route.post('/teachers/import', 'TeachersController.import');
+
+Route.resource('/projects', 'ProjectsController').apiOnly();
+Route.get('/projects/:id/students', 'ProjectsController.getStudents');
+Route.get('/projects/:id/student', 'ProjectsController.getStudentById');
+Route.get('/projects/:id/teachers', 'ProjectsController.getTeachers');
+Route.get('/projects/:id/disciplines', 'ProjectsController.getDisciplines');
+Route.post('/projects/import', 'ProjectsController.import');
+
+Route.resource('/projects-students', 'ProjectStudentsController').apiOnly();
