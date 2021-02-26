@@ -1,18 +1,22 @@
 import React, { useState, useEffect } from 'react';
 
-import { Upload, message, Button, Table, Input } from 'antd';
-import { UploadOutlined } from '@ant-design/icons';
-import { UploadChangeParam } from 'antd/lib/upload';
-import { UploadFile, RcFile } from 'antd/lib/upload/interface';
-import { MdEdit } from 'react-icons/md';
-
-import { TablePaginationConfig } from 'antd/lib/table';
+import { Button, Table, Input, Modal, Spin, Tooltip } from 'antd';
+import {
+  UploadOutlined,
+  CloseCircleOutlined,
+  CheckCircleOutlined,
+  FileAddOutlined,
+} from '@ant-design/icons';
+import { FaFileExcel } from 'react-icons/fa';
+import { MdEdit, MdDeleteForever } from 'react-icons/md';
+import { useBottomScrollListener } from 'react-bottom-scroll-listener';
 import { Link } from 'react-router-dom';
+
 import StudentService from '../../services/student.service';
-
 import DashboardLayout from '../../layouts/DashboardLayout';
+import Dropzone from '../../components/Dropzone';
 
-import { TableItem, ActionItem } from './styles';
+import { TableItem, ModalContent, Container } from './styles';
 
 const Students: React.FC = () => {
   const columns = [
@@ -21,12 +25,12 @@ const Students: React.FC = () => {
       dataIndex: 'cpf',
     },
     {
-      title: 'Matrícula',
-      dataIndex: 'registration',
-    },
-    {
       title: 'Nome',
       dataIndex: 'name',
+    },
+    {
+      title: 'Telefone',
+      dataIndex: 'phone',
     },
     {
       title: 'E-mail',
@@ -42,52 +46,86 @@ const Students: React.FC = () => {
     id: number;
     name: string;
     cpf: string;
-    registration: string;
+    phone: string;
     email: string;
+    is_valid: boolean;
   }
 
-  const [file, setFile] = useState<RcFile>();
+  const perPage = 15;
+
+  const [modalState, setModalState] = useState<boolean>(false);
   const [searchTerm, setSearchTerm] = useState<string>('');
-  const [students, setStudents] = useState<Student[]>();
+  const [students, setStudents] = useState<Student[]>([]);
   const [page, setPage] = useState<number>(1);
-  const [totalPages, setTotalPages] = useState<number>();
-  const [perPage, setPerPage] = useState<number>(10);
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [errorMessages, setErrorMessages] = useState<string[]>([]);
+
+  const removeFile = (file: File) => {
+    const newFiles = [...selectedFiles];
+    const newMessages = [...errorMessages];
+    const index = newFiles.indexOf(file);
+    newMessages.splice(index, 1);
+    newFiles.splice(index, 1);
+    setSelectedFiles(newFiles);
+    setErrorMessages(newMessages);
+  };
 
   useEffect(() => {
     StudentService.get(page, perPage, searchTerm).then((response) => {
-      setStudents(response.data.data);
-      setPage(response.data.meta.current_page);
-      setTotalPages(response.data.meta.total);
+      const { data } = response;
+      if (page === 1) setStudents(data.data);
+      else setStudents([...students, ...data.data]);
+      setPage(data.meta.current_page);
     });
-  }, [page, searchTerm, perPage]);
+  }, [page]);
+
+  useEffect(() => {
+    setStudents([]);
+    setPage(1);
+    StudentService.get(1, perPage, searchTerm).then((response) => {
+      const { data } = response;
+      setStudents([...data.data]);
+    });
+  }, [searchTerm]);
 
   const { Search } = Input;
 
-  const props = {
-    name: 'file',
-    accept: '.xls,.xlsx,.xlsm,.xlsb,.xltx',
-    beforeUpload: (f: RcFile) => {
-      setFile(f);
-      return false;
-    },
-    headers: {
-      authorization: 'authorization-text',
-    },
-    onChange(info: UploadChangeParam<UploadFile<any>>) {
-      if (info.file.status !== 'uploading') {
-        console.log(info.file, info.fileList);
+  async function uploadFile(file: File) {
+    const data = new FormData();
+    data.append('file', file);
+    await StudentService.import(data);
+  }
+
+  async function uploadAllFiles() {
+    setLoading(true);
+    const messages = [];
+    for (let i = errorMessages.length; i < selectedFiles.length; i++) {
+      try {
+        // eslint-disable-next-line no-await-in-loop
+        await uploadFile(selectedFiles[i]);
+        messages.push('');
+      } catch ({ response }) {
+        messages.push(response.data.message);
       }
-      if (info.file.status === 'done') {
-        message.success(`${info.file.name} carregado com sucesso!`);
-      } else if (info.file.status === 'error') {
-        message.error(`${info.file.name} falhou ao carregar.`);
-      }
-    },
-  };
+    }
+    setErrorMessages([...errorMessages, ...messages]);
+    setLoading(false);
+    setPage(0);
+    setPage(1);
+  }
+
+  function closeModal() {
+    setModalState(false);
+    setErrorMessages([]);
+    setSelectedFiles([]);
+  }
+
+  useBottomScrollListener(() => setPage(page + 1));
 
   return (
     <DashboardLayout>
-      <ActionItem>
+      <Container>
         <Search
           placeholder="Pesquisar..."
           onSearch={(value) => setSearchTerm(value)}
@@ -95,49 +133,98 @@ const Students: React.FC = () => {
         />
 
         <div className="buttons">
-          <Link to="/students/form">
+          <Link to="/students/new">
             <Button type="primary" className="newButton">
-              Novo
+              <FileAddOutlined /> Novo
             </Button>
           </Link>
-          <Button type="primary" danger className="deleteButton">
-            Excluir
+          <Button
+            type="primary"
+            className="uploadButton"
+            onClick={() => setModalState(true)}
+          >
+            <UploadOutlined /> Importar
           </Button>
-          <Upload {...props} style={{ background: '#000' }}>
-            <Button type="primary" className="uploadButton">
-              <UploadOutlined /> Importar
-            </Button>
-          </Upload>
         </div>
-      </ActionItem>
-      {/* <Upload
-        beforeUpload={(f) => {
-          setFile(f);
-          return false;
-        }}
-        directory
-      >
-        <Button>
-          <UploadOutlined /> Upload Directory
-        </Button>
-      </Upload> */}
+        <Modal
+          title="Importar"
+          visible={modalState}
+          footer={null}
+          onCancel={(e) => closeModal()}
+          width={800}
+        >
+          <ModalContent>
+            <Spin tip="Carregando..." spinning={loading}>
+              <div className="drop-files-field">
+                <Dropzone
+                  setSelectedFiles={setSelectedFiles}
+                  selectedFiles={selectedFiles}
+                />
+                <div className="file-list">
+                  <h4>Arquivos Carregados:</h4>
+                  <ul>
+                    {selectedFiles.map((file: File, index) => (
+                      <li key={file.name}>
+                        <div className="file-info">
+                          <FaFileExcel />
+                          <div>
+                            <p>{file.name}</p>
+                            <span className="file-size-text">
+                              {(file.size / 1e6).toFixed(2)} mb
+                            </span>
+                          </div>
+                        </div>
+                        {errorMessages.length - 1 >= index &&
+                          (errorMessages[index] === '' ? (
+                            <CheckCircleOutlined className="green" />
+                          ) : (
+                            <Tooltip title={errorMessages[index]}>
+                              <CloseCircleOutlined className="red" />
+                            </Tooltip>
+                          ))}
+                        <MdDeleteForever
+                          className="red"
+                          size={22}
+                          onClick={() => removeFile(file)}
+                        />
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+              <div
+                className="import-button"
+                style={{
+                  display: 'flex',
+                  justifyContent: 'flex-end',
+                  marginTop: '1rem',
+                }}
+              >
+                <Button type="primary" onClick={() => uploadAllFiles()}>
+                  Importar
+                </Button>
+              </div>
+            </Spin>
+          </ModalContent>
+        </Modal>
+      </Container>
       <TableItem>
         <Table
+          locale={{ emptyText: 'Nenhum Estudante Encontrado' }}
+          rowClassName={(record, index) =>
+            !students[index].is_valid ? 'table-row-red' : ''}
           columns={columns}
           dataSource={students?.map((_) => ({
             ..._,
             icon: (
-              <Link to="/students/form">
+              <Link to={`/students/${_.id}/edit`}>
                 <MdEdit size={18} />
               </Link>
             ),
           }))}
+          rowKey="id"
           size="middle"
-          pagination={{ current: page, pageSize: perPage, total: totalPages }}
-          onChange={(pagination: TablePaginationConfig) => {
-            setPage(Number(pagination.current));
-            setPerPage(Number(pagination.pageSize));
-          }}
+          pagination={false}
         />
       </TableItem>
     </DashboardLayout>
