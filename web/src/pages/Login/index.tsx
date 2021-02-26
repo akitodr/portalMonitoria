@@ -14,7 +14,7 @@ const Login: React.FC = () => {
         <Input />
         <span>Senha:</span>
         <Input />
-        <Link to='/home'>
+        <Link to='/projects'>
           <Button type='primary'>Entrar</Button>
         </Link>
       </FormContainer>
