@@ -15,10 +15,6 @@ export default class StudentsController {
 
     if (term) {
       query.where('name', 'ilike', `%${term}%`);
-      //query.where('name', '~*', `.*${term}.*`);
-      // .orWhere('cpf', '~*', `.*${term}.*`)
-      // .orWhere('registration', '~*', `.*${term}.*`)
-      // .orWhere('email', '~*', `.*${term}.*`);
     }
     query.orderBy('name');
     return await query.paginate(page, perPage);
@@ -54,7 +50,6 @@ export default class StudentsController {
   }
 
   public async import({ request, response }: HttpContextContract) {
-    console.log('Consegui');
     const file = request.file('file');
     try {
       await file?.move(Application.tmpPath('upload'));

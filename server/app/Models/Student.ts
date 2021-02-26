@@ -1,8 +1,9 @@
 import { DateTime } from 'luxon';
-import { BaseModel, column, belongsTo, BelongsTo, beforeSave } from '@ioc:Adonis/Lucid/Orm';
+import { BaseModel, column, belongsTo, BelongsTo, beforeSave, manyToMany, ManyToMany } from '@ioc:Adonis/Lucid/Orm';
 import { cpf } from 'cpf-cnpj-validator';
 import Course from './Course';
 import School from './School';
+import Project from './Project';
 
 export default class Student extends BaseModel {
   @column({ isPrimary: true })
@@ -33,6 +34,9 @@ export default class Student extends BaseModel {
   public isValid: boolean;
 
   @column()
+  public triedToUpdate: boolean;
+
+  @column()
   public schoolId: number;
 
   @belongsTo(() => School)
@@ -43,6 +47,9 @@ export default class Student extends BaseModel {
 
   @belongsTo(() => Course)
   public course: BelongsTo<typeof Course>;
+
+  @manyToMany(() => Project)
+  public projects: ManyToMany<typeof Project>;
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime;
