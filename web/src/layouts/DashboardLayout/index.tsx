@@ -1,5 +1,5 @@
 import React from 'react';
-import { FaHome, FaUserGraduate, FaUserFriends, FaBoxOpen, FaAward, FaEllipsisH } from 'react-icons/fa';
+import { FaUserGraduate, FaUserFriends, FaBoxOpen, FaAward, FaEllipsisH } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 
 import logoMonitoria from  '../../assets/Logo-Monitoria.svg';
@@ -21,9 +21,9 @@ const DashboardLayout: React.FC = ({ children }) => (
     <SideMenu>
       <ul>
         <li>
-          <Link to="/home">
-            <FaHome size={32} />
-            <span>INÍCIO</span>
+          <Link to="/projects">
+            <FaBoxOpen size={32} />
+            <span>PROJETOS</span>
           </Link>
         </li>
         <li>
@@ -36,12 +36,6 @@ const DashboardLayout: React.FC = ({ children }) => (
           <Link to="/teachers">
             <FaUserFriends size={32} />
             <span>ORIENTADORES</span>
-          </Link>
-        </li>
-        <li>
-          <Link to="/projects">
-            <FaBoxOpen size={32} />
-            <span>PROJETOS</span>
           </Link>
         </li>
         <li>
