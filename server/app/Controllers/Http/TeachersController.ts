@@ -7,7 +7,7 @@ import fs from 'fs';
 export default class TeachersController {
   public async index({request}: HttpContextContract) {
     const page = request.input('page', 1);
-    const perPage = request.input('perpage', 10);
+    const perPage = request.input('perPage', 10);
     const { term } = request.get();
 
     const query = Teacher.query();

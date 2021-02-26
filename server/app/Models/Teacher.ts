@@ -1,7 +1,8 @@
 import { DateTime } from 'luxon';
-import { BaseModel, beforeSave, belongsTo, BelongsTo, column } from '@ioc:Adonis/Lucid/Orm';
+import { BaseModel, beforeSave, belongsTo, BelongsTo, column, ManyToMany, manyToMany } from '@ioc:Adonis/Lucid/Orm';
 import School from './School';
 import Course from './Course';
+import Project from './Project';
 
 export default class Teacher extends BaseModel {
   @column({ isPrimary: true })
@@ -20,6 +21,9 @@ export default class Teacher extends BaseModel {
   public phone: string;
 
   @column()
+  public triedToUpdate: boolean;
+
+  @column()
   public schoolId: number;
 
   @belongsTo(() => School)
@@ -30,6 +34,9 @@ export default class Teacher extends BaseModel {
 
   @belongsTo(() => Course)
   public course: BelongsTo<typeof Course>;
+
+  @manyToMany(() => Project)
+  public projects: ManyToMany<typeof Project>;
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime;
