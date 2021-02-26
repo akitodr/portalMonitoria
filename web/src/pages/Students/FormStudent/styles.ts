@@ -20,13 +20,13 @@ export const Container = styled.div`
 
   .user-name {
     display: grid;
-    grid-template-columns: 2fr 3fr;
+    grid-template-columns: 1fr 4fr;
     grid-column-gap: 1rem;
   }
 
   .user-information {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr;
     grid-column-gap: 1rem;
   }
 
