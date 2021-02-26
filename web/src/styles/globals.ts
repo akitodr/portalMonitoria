@@ -11,6 +11,7 @@ const GlobalStyle = createGlobalStyle`
     --background-button-color: #5BBEC2;
     --background-button-danger-color: #E85545;
     --button-primary-color: #5BBEC2;
+    --yellow-color: #F7AE3A;
   }
   
   * {
