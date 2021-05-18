@@ -21,7 +21,7 @@ import ProjectsService from '../../services/projects.service';
 import { RadioChangeEvent } from 'antd/lib/radio';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 
-const FinalReportLessForm: React.FC = () => {
+const FinalReportMoreFormClass: React.FC = () => {
   interface Campus {
     id: number;
     name: string;
@@ -112,10 +112,16 @@ const FinalReportLessForm: React.FC = () => {
       </Header>
       <Container>
         <FormContainer>
-          <h2>ANEXO 3 – RELATÓRIO FINAL PARA NOTA ANTERIOR SUPERIOR A 8,0</h2>
+          <h2>
+            ANEXO 4 – RELATÓRIO FINAL PARA PROJETOS QUE CONTAM APENAS COM
+            MONITORES QUE ATUAM EXCLUSIVAMENTE DURANTE AS AULAS (NOTA ANTERIOR
+            SUPERIOR A 8,0)
+          </h2>
           <p>
             Utilize este Anexo se, ao ser avaliado em ciclo anterior, o
-            relatório final obteve nota superior a 8,0
+            relatório final obteve nota superior a 8,0. Sendo que, este
+            relatório é escrito pelo monitor e apresentado pelo professor
+            proponente do projeto.
           </p>
           <Form
             form={form}
@@ -124,6 +130,7 @@ const FinalReportLessForm: React.FC = () => {
             onFinish={() => console.log('Done')}
             validateMessages={validateMessages}
           >
+            <h3>PREENCHIDO PELO MONITOR</h3>
             <Form.Item
               name="project_id"
               label="Nº do Projeto"
@@ -176,6 +183,8 @@ const FinalReportLessForm: React.FC = () => {
                 <TextArea rows={4} />
               </Form.Item>
             </Form.Item>
+
+            <h3>PREENCHIDO PELO PROFESSOR</h3>
 
             <Form.Item
               name="reconduction_option"
@@ -481,4 +490,4 @@ const FinalReportLessForm: React.FC = () => {
   );
 };
 
-export default FinalReportLessForm;
+export default FinalReportMoreFormClass;
