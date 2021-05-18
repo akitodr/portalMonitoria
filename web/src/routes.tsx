@@ -14,6 +14,8 @@ import FormStudentProject from './pages/Projects/FormProject/FormStudentProject'
 import NewProjectSubmission from './pages/NewProjectSubmissionForm';
 import FinalReportLessForm from './pages/FinalReportLessForm';
 import FinalReportMoreForm from './pages/FinalReportMoreForm';
+import FinalReportMoreFormClass from './pages/FinalReportMoreFormClass';
+import FinalReportLessFormClass from './pages/FinalReportLessFormClass';
 
 const Routes = () => {
   return (
@@ -32,8 +34,10 @@ const Routes = () => {
       <Route component={Others} path="/others" />
       <Route component={StudentTerm} path="/terms-of-service" />
       <Route component={NewProjectSubmission} path="/new-project-submission" />
-      <Route component={FinalReportLessForm} path="/final-report-less-form" />
-      <Route component={FinalReportMoreForm} path="/final-report-more-form" />
+      <Route component={FinalReportLessForm} path="/final-report-less-form" exact />
+      <Route component={FinalReportMoreForm} path="/final-report-more-form" exact />
+      <Route component={FinalReportMoreFormClass} path="/final-report-more-form-class" />
+      <Route component={FinalReportLessFormClass} path="/final-report-less-form-class" />
     </>
   );
 };
