@@ -1,7 +1,7 @@
 import BaseSchema from '@ioc:Adonis/Lucid/Schema'
 
 export default class CreateTermOfServices extends BaseSchema {
-  protected tableName = 'create_term_of_service'
+  protected tableName = 'term_of_services'
 
   public async up () {
     this.schema.createTable(this.tableName, (table) => {
@@ -13,9 +13,9 @@ export default class CreateTermOfServices extends BaseSchema {
       table.string('registration').notNullable();
       table.string('phone').notNullable();
       table.string('email').notNullable();
-      table.string('institutional_emal').notNullable();
+      table.string('institutional_email').notNullable();
       table.boolean('status').notNullable();
-      table.integer('paid_wordload').notNullable();
+      table.integer('paid_workload').notNullable();
       table.integer('voluntary_workload').notNullable();
       table.integer('class_workload').notNullable();
       table.integer('extraclass_workload').notNullable();

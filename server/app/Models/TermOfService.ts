@@ -34,7 +34,7 @@ export default class TermOfService extends BaseModel {
   public status: boolean;
 
   @column()
-  public paidWordload: number;
+  public paidWorkload: number;
 
   @column()
   public voluntaryWorkload: number;
