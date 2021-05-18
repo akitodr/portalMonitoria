@@ -42,4 +42,6 @@ Route.get('/projects/:id/teachers', 'ProjectsController.getTeachers');
 Route.get('/projects/:id/disciplines', 'ProjectsController.getDisciplines');
 Route.post('/projects/import', 'ProjectsController.import');
 
+Route.resource('/terms-of-service', 'TermOfServiceController').apiOnly();
+
 Route.resource('/projects-students', 'ProjectStudentsController').apiOnly();
