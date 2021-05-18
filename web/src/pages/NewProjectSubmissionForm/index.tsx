@@ -38,6 +38,11 @@ const NewProjectSubmissionForm: React.FC = () => {
     school_id?: number;
   }
 
+  interface Teacher {
+    id: number;
+    name: string;
+  }
+
   const [form] = Form.useForm();
   const { Option } = Select;
   const { TextArea } = Input;
@@ -52,6 +57,7 @@ const NewProjectSubmissionForm: React.FC = () => {
   const [chExtraClass, setChExtraClass] = useState<number>(0);
   const [totalHours, setTotalHours] = useState<number>(0);
   const [checkboxValue, setCheboxValue] = useState<boolean>(false);
+  const [teachers, setTeachers] = useState<Teacher[]>([]);
 
   const validateMessages = {
     required: 'Campo Obrigatório',
@@ -65,12 +71,13 @@ const NewProjectSubmissionForm: React.FC = () => {
     CampusService.get().then((response) => {
       setCampuses(response.data);
     });
-  }, []);
-
-  useEffect(() => {
     CoursesService.get().then((response) => {
       setAllCourses(response.data);
     });
+  }, []);
+
+  useEffect(() => {
+    
   }, []);
 
   function loadCampusesSchools(campusId: number) {
