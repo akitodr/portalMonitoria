@@ -18,6 +18,7 @@ import { Header, Container, FormContainer } from './styles';
 import SchoolService from '../../services/schools.service';
 import CampusService from '../../services/campus.service';
 import CoursesService from '../../services/courses.service';
+import TeachersService from '../../services/teachers.service';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 
 const NewProjectSubmissionForm: React.FC = () => {
@@ -74,10 +75,9 @@ const NewProjectSubmissionForm: React.FC = () => {
     CoursesService.get().then((response) => {
       setAllCourses(response.data);
     });
-  }, []);
-
-  useEffect(() => {
-    
+    // TeachersService.getAll().then((response) => {
+    //   setTeachers(response.data);
+    // });
   }, []);
 
   function loadCampusesSchools(campusId: number) {
